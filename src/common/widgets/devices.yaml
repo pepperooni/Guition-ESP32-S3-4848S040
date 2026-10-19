@@ -55,23 +55,6 @@ sensor:
           id: felix_ov_target_label
           text: !lambda 'char b[14]; snprintf(b,14,"cible %.1f°",x); return b;'
 
-  - platform: homeassistant
-    id: sdb_ov_current_temp
-    entity_id: "climate.thermostat_salle_de_bain"
-    attribute: current_temperature
-    on_value:
-      - lvgl.label.update:
-          id: sdb_ov_current_label
-          text: !lambda 'char b[10]; snprintf(b,10,"%.1f°",x); return b;'
-
-  - platform: homeassistant
-    id: sdb_ov_target_temp
-    entity_id: "climate.thermostat_salle_de_bain"
-    attribute: temperature
-    on_value:
-      - lvgl.label.update:
-          id: sdb_ov_target_label
-          text: !lambda 'char b[14]; snprintf(b,14,"cible %.1f°",x); return b;'
 
 text_sensor:
   # === OVERVIEW THERMOSTATS — modes ===
@@ -148,29 +131,48 @@ text_sensor:
                 id: felix_ov_target_label
                 text_color: color_steel_blue
 
+  # SdB : pas de thermostat, on affiche le radiateur et le boost 1h
   - platform: homeassistant
     id: sdb_ov_mode
-    entity_id: "climate.thermostat_salle_de_bain"
+    entity_id: "switch.actionneur_sdb"
     on_value:
       - if:
           condition:
-            lambda: 'return x == "heat";'
+            lambda: 'return x == "on";'
           then:
             - lvgl.label.update:
                 id: sdb_ov_mode_label
                 text_color: color_deep_orange
                 text: "\U000F0238"
             - lvgl.label.update:
-                id: sdb_ov_target_label
-                text_color: color_deep_orange
+                id: sdb_ov_current_label
+                text: "ON"
           else:
             - lvgl.label.update:
                 id: sdb_ov_mode_label
                 text_color: color_misty_blue
                 text: "\U000F0425"
             - lvgl.label.update:
+                id: sdb_ov_current_label
+                text: "OFF"
+
+  - platform: homeassistant
+    id: sdb_ov_boost
+    entity_id: "script.salle_de_bain_boost"
+    on_value:
+      - if:
+          condition:
+            lambda: 'return x == "on";'
+          then:
+            - lvgl.label.update:
+                id: sdb_ov_target_label
+                text_color: color_deep_orange
+                text: "boost en cours"
+          else:
+            - lvgl.label.update:
                 id: sdb_ov_target_label
                 text_color: color_steel_blue
+                text: "boost 1h"
 
 lvgl:
   pages:
@@ -380,20 +382,20 @@ lvgl:
                   y: -12
                   text_font: nunito_48
                   text_color: color_misty_blue
-                  text: "--°"
+                  text: "--"
               - label:
                   align: center
                   y: 40
                   text_font: nunito_16
                   text_color: color_steel_blue
-                  text: "actuel"
+                  text: "radiateur"
               - label:
                   id: sdb_ov_target_label
                   align: bottom_mid
                   y: -14
                   text_font: nunito_18
-                  text_color: color_deep_orange
-                  text: "cible --°"
+                  text_color: color_steel_blue
+                  text: "boost 1h"
 
         # ─── RETOUR HOME ─────────────────────────────────────────────────
         - obj:
