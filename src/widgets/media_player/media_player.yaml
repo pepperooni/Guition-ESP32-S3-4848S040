@@ -521,20 +521,21 @@ lvgl:
                         shadow_width: 5
                         shadow_spread: 1
                         shadow_color: color_black
+                        clickable: true
                         pressed:
                           bg_color: color_black
                           shadow_width: 4
+                        on_press:
+                          - homeassistant.action:
+                              action: media_player.turn_off
+                              data:
+                                entity_id: "${media_player_entity}"
                         widgets:
                           - label:
                               align: center
                               text_color: color_misty_blue
                               text_font: mdi_icons_28
                               text: "${power_icon}"
-                              on_press:
-                                - homeassistant.action:
-                                    action: media_player.turn_off
-                                    data:
-                                      entity_id: "${media_player_entity}"
                     # repeat
                     - obj:
                         id: media_player_repeat_btn
@@ -549,9 +550,12 @@ lvgl:
                         shadow_width: 5
                         shadow_spread: 1
                         shadow_color: color_black
+                        clickable: true
                         pressed:
                           bg_color: color_black
                           shadow_width: 4
+                        on_press:
+                          - script.execute: handle_repeat_press_script
                         widgets:
                           - label:
                               id: media_player_repeat_label
@@ -559,8 +563,6 @@ lvgl:
                               text_color: color_misty_blue
                               text_font: mdi_icons_28
                               text: "${repeat_all_icon}"
-                              on_press:
-                                - script.execute: handle_repeat_press_script
                     
                     # source
                     - obj:
@@ -576,6 +578,7 @@ lvgl:
                         shadow_width: 5
                         shadow_spread: 1
                         shadow_color: color_black
+                        clickable: true
                         pressed:
                           bg_color: color_black
                           shadow_width: 4
@@ -586,7 +589,7 @@ lvgl:
                               text_color: color_misty_blue
                               text_font: mdi_icons_28
                               text: "${media_source}"
-                        on_click:
+                        on_press:
                           - lambda: |-
                               if (!id(source_available)) return;
                               if (id(is_animating)) return;
@@ -607,9 +610,26 @@ lvgl:
                         shadow_width: 5
                         shadow_spread: 1
                         shadow_color: color_black
+                        clickable: true
                         pressed:
                           bg_color: color_black
                           shadow_width: 4
+                        on_press:
+                          - if:
+                              condition:
+                                lambda: 'return id(media_player_is_volume_muted).state;'
+                              then:
+                                - homeassistant.action:
+                                    action: media_player.volume_mute
+                                    data:
+                                      entity_id: "${media_player_entity}"
+                                      is_volume_muted: "false"
+                              else:
+                                - homeassistant.action:
+                                    action: media_player.volume_mute
+                                    data:
+                                      entity_id: "${media_player_entity}"
+                                      is_volume_muted: "true"
                         widgets:
                           - label:
                               id: media_player_mute_label
@@ -617,22 +637,6 @@ lvgl:
                               text_color: color_misty_blue
                               text_font: mdi_icons_28
                               text: "${volume_on_icon}"
-                              on_press:
-                                - if:
-                                    condition:
-                                      lambda: 'return id(media_player_is_volume_muted).state;'
-                                    then:
-                                      - homeassistant.action:
-                                          action: media_player.volume_mute
-                                          data:
-                                            entity_id: "${media_player_entity}"
-                                            is_volume_muted: "false"
-                                    else:
-                                      - homeassistant.action:
-                                          action: media_player.volume_mute
-                                          data:
-                                            entity_id: "${media_player_entity}"
-                                            is_volume_muted: "true"
 
                     # volume -
                     - obj:
@@ -648,9 +652,15 @@ lvgl:
                         shadow_width: 5
                         shadow_spread: 1
                         shadow_color: color_black
+                        clickable: true
                         pressed:
                           bg_color: color_black
                           shadow_width: 4
+                        on_press:
+                          - homeassistant.action:
+                              action: media_player.volume_down
+                              data:
+                                entity_id: "${media_player_entity}"
                         widgets:
                           - label:
                               id: media_player_vol_down_label
@@ -658,11 +668,6 @@ lvgl:
                               text_color: color_misty_blue
                               text_font: mdi_icons_28
                               text: "${volume_minus_icon}"
-                              on_press:
-                                - homeassistant.action:
-                                    action: media_player.volume_down
-                                    data:
-                                      entity_id: "${media_player_entity}"
 
                     # volume +
                     - obj:
@@ -678,9 +683,15 @@ lvgl:
                         shadow_width: 5
                         shadow_spread: 1
                         shadow_color: color_black
+                        clickable: true
                         pressed:
                           bg_color: color_black
                           shadow_width: 4
+                        on_press:
+                          - homeassistant.action:
+                              action: media_player.volume_up
+                              data:
+                                entity_id: "${media_player_entity}"
                         widgets:
                           - label:
                               id: media_player_vol_up_label
@@ -688,11 +699,6 @@ lvgl:
                               text_color: color_misty_blue
                               text_font: mdi_icons_28
                               text: "${volume_plus_icon}"
-                              on_press:
-                                - homeassistant.action:
-                                    action: media_player.volume_up
-                                    data:
-                                      entity_id: "${media_player_entity}"
 
         # CIRCLE
         - obj:
@@ -756,10 +762,24 @@ lvgl:
                         height: 100
                         pad_all: 0
                         align: center
-                        clickable: false
+                        clickable: true
                         radius: 50
                         border_opa: transp
                         bg_opa: transp
+                        on_press:
+                          - if:
+                              condition:
+                                lambda: 'return id(media_player_state_sensor).state == "playing";'
+                              then:
+                                - homeassistant.action:
+                                    action: media_player.media_pause
+                                    data:
+                                      entity_id: "${media_player_entity}"
+                              else:
+                                - homeassistant.action:
+                                    action: media_player.media_play
+                                    data:
+                                      entity_id: "${media_player_entity}"
                         widgets:
                           - label:
                               id: media_player_state_label
@@ -767,20 +787,6 @@ lvgl:
                               text_color: color_misty_blue
                               text_font: mdi_icons_52
                               text: "${play_icon}"
-                              on_press:
-                                - if:
-                                    condition:
-                                      lambda: 'return id(media_player_state_sensor).state == "playing";'
-                                    then:
-                                      - homeassistant.action:
-                                          action: media_player.media_pause
-                                          data:
-                                            entity_id: "${media_player_entity}"
-                                    else:
-                                      - homeassistant.action:
-                                          action: media_player.media_play
-                                          data:
-                                            entity_id: "${media_player_entity}"
 
         - obj:
             id: media_player_source_panel

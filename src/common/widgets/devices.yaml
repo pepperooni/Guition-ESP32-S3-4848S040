@@ -1,164 +1,421 @@
+sensor:
+  # === OVERVIEW THERMOSTATS — températures actuelles et cibles ===
+
+  - platform: homeassistant
+    id: pv_ov_current_temp
+    entity_id: "climate.thermostat_piece_de_vie"
+    attribute: current_temperature
+    on_value:
+      - lvgl.label.update:
+          id: pv_ov_current_label
+          text: !lambda 'char b[10]; snprintf(b,10,"%.1f°",x); return b;'
+
+  - platform: homeassistant
+    id: pv_ov_target_temp
+    entity_id: "climate.thermostat_piece_de_vie"
+    attribute: temperature
+    on_value:
+      - lvgl.label.update:
+          id: pv_ov_target_label
+          text: !lambda 'char b[14]; snprintf(b,14,"cible %.1f°",x); return b;'
+
+  - platform: homeassistant
+    id: chambre_ov_current_temp
+    entity_id: "climate.thermostat_chambre"
+    attribute: current_temperature
+    on_value:
+      - lvgl.label.update:
+          id: chambre_ov_current_label
+          text: !lambda 'char b[10]; snprintf(b,10,"%.1f°",x); return b;'
+
+  - platform: homeassistant
+    id: chambre_ov_target_temp
+    entity_id: "climate.thermostat_chambre"
+    attribute: temperature
+    on_value:
+      - lvgl.label.update:
+          id: chambre_ov_target_label
+          text: !lambda 'char b[14]; snprintf(b,14,"cible %.1f°",x); return b;'
+
+  - platform: homeassistant
+    id: felix_ov_current_temp
+    entity_id: "climate.thermostat_chambre_felix"
+    attribute: current_temperature
+    on_value:
+      - lvgl.label.update:
+          id: felix_ov_current_label
+          text: !lambda 'char b[10]; snprintf(b,10,"%.1f°",x); return b;'
+
+  - platform: homeassistant
+    id: felix_ov_target_temp
+    entity_id: "climate.thermostat_chambre_felix"
+    attribute: temperature
+    on_value:
+      - lvgl.label.update:
+          id: felix_ov_target_label
+          text: !lambda 'char b[14]; snprintf(b,14,"cible %.1f°",x); return b;'
+
+  - platform: homeassistant
+    id: sdb_ov_current_temp
+    entity_id: "climate.thermostat_salle_de_bain"
+    attribute: current_temperature
+    on_value:
+      - lvgl.label.update:
+          id: sdb_ov_current_label
+          text: !lambda 'char b[10]; snprintf(b,10,"%.1f°",x); return b;'
+
+  - platform: homeassistant
+    id: sdb_ov_target_temp
+    entity_id: "climate.thermostat_salle_de_bain"
+    attribute: temperature
+    on_value:
+      - lvgl.label.update:
+          id: sdb_ov_target_label
+          text: !lambda 'char b[14]; snprintf(b,14,"cible %.1f°",x); return b;'
+
+text_sensor:
+  # === OVERVIEW THERMOSTATS — modes ===
+
+  - platform: homeassistant
+    id: pv_ov_mode
+    entity_id: "climate.thermostat_piece_de_vie"
+    on_value:
+      - if:
+          condition:
+            lambda: 'return x == "heat";'
+          then:
+            - lvgl.label.update:
+                id: pv_ov_mode_label
+                text_color: color_deep_orange
+                text: "\U000F0238"
+            - lvgl.label.update:
+                id: pv_ov_target_label
+                text_color: color_deep_orange
+          else:
+            - lvgl.label.update:
+                id: pv_ov_mode_label
+                text_color: color_misty_blue
+                text: "\U000F0425"
+            - lvgl.label.update:
+                id: pv_ov_target_label
+                text_color: color_steel_blue
+
+  - platform: homeassistant
+    id: chambre_ov_mode
+    entity_id: "climate.thermostat_chambre"
+    on_value:
+      - if:
+          condition:
+            lambda: 'return x == "heat";'
+          then:
+            - lvgl.label.update:
+                id: chambre_ov_mode_label
+                text_color: color_deep_orange
+                text: "\U000F0238"
+            - lvgl.label.update:
+                id: chambre_ov_target_label
+                text_color: color_deep_orange
+          else:
+            - lvgl.label.update:
+                id: chambre_ov_mode_label
+                text_color: color_misty_blue
+                text: "\U000F0425"
+            - lvgl.label.update:
+                id: chambre_ov_target_label
+                text_color: color_steel_blue
+
+  - platform: homeassistant
+    id: felix_ov_mode
+    entity_id: "climate.thermostat_chambre_felix"
+    on_value:
+      - if:
+          condition:
+            lambda: 'return x == "heat";'
+          then:
+            - lvgl.label.update:
+                id: felix_ov_mode_label
+                text_color: color_deep_orange
+                text: "\U000F0238"
+            - lvgl.label.update:
+                id: felix_ov_target_label
+                text_color: color_deep_orange
+          else:
+            - lvgl.label.update:
+                id: felix_ov_mode_label
+                text_color: color_misty_blue
+                text: "\U000F0425"
+            - lvgl.label.update:
+                id: felix_ov_target_label
+                text_color: color_steel_blue
+
+  - platform: homeassistant
+    id: sdb_ov_mode
+    entity_id: "climate.thermostat_salle_de_bain"
+    on_value:
+      - if:
+          condition:
+            lambda: 'return x == "heat";'
+          then:
+            - lvgl.label.update:
+                id: sdb_ov_mode_label
+                text_color: color_deep_orange
+                text: "\U000F0238"
+            - lvgl.label.update:
+                id: sdb_ov_target_label
+                text_color: color_deep_orange
+          else:
+            - lvgl.label.update:
+                id: sdb_ov_mode_label
+                text_color: color_misty_blue
+                text: "\U000F0425"
+            - lvgl.label.update:
+                id: sdb_ov_target_label
+                text_color: color_steel_blue
+
 lvgl:
   pages:
-    - id: devices_page
+    - id: thermostats_page
       bg_color: color_black
       scrollable: false
       widgets:
+
+        # ─── PIÈCE DE VIE (top-left) ────────────────────────────────────
         - obj:
-            id: devices_panel
-            y: 20
-            width: 440
-            height: 440
-            align: top_mid
-            clickable: false
-            scrollable: false
-            radius: 20
+            id: pv_ov_card
+            x: 10
+            y: 10
+            width: 225
+            height: 225
             pad_all: 0
+            radius: 20
             bg_color: color_slate_blue_gray
             border_opa: transp
-            border_width: 0
             shadow_opa: transp
-            layout:
-              type: flex
-              flex_flow: column
-              flex_align_main: center
-              flex_align_cross: center
-              flex_align_track: center
+            clickable: true
+            pressed:
+              bg_color: color_steel_blue
+            on_press:
+              - lvgl.page.show: climate_page
             widgets:
+              - label:
+                  id: pv_ov_mode_label
+                  align: top_left
+                  x: 12
+                  y: 12
+                  text_font: mdi_icons_28
+                  text_color: color_deep_orange
+                  text: "\U000F0238"
+              - label:
+                  align: top_left
+                  x: 48
+                  y: 16
+                  text_font: nunito_16
+                  text_color: color_misty_blue
+                  text: "Pièce de vie"
+              - label:
+                  id: pv_ov_current_label
+                  align: center
+                  y: -12
+                  text_font: nunito_48
+                  text_color: color_misty_blue
+                  text: "--°"
+              - label:
+                  align: center
+                  y: 40
+                  text_font: nunito_16
+                  text_color: color_steel_blue
+                  text: "actuel"
+              - label:
+                  id: pv_ov_target_label
+                  align: bottom_mid
+                  y: -14
+                  text_font: nunito_18
+                  text_color: color_deep_orange
+                  text: "cible --°"
 
-              # Alarm panel button
-              - button:
-                  id: devices_alarm_panel_btn
-                  width: 130
-                  height: 40
-                  bg_opa: transp
-                  shadow_opa: transp
-                  border_opa: transp
-                  widgets:
-                    - label:
-                        align: center
-                        text_font: nunito_18
-                        text_color: color_misty_blue
-                        text: "Alarm Panel"
-                  # on_click:
-                  #   - lvgl.page.show: ${alarm_panel_widget_name_1}_page
-                  #   - delay: 250ms
-                  #   - lambda: |-
-                  #       int alarm_panels = ${alarm_panels_amount};
-                  #       if (alarm_panels >= 2) {
-                  #         lv_obj_clear_flag(id(alarm_panel_select_widget), LV_OBJ_FLAG_HIDDEN);
-                  #       }
+        # ─── CHAMBRE (top-right) ─────────────────────────────────────────
+        - obj:
+            id: chambre_ov_card
+            x: 245
+            y: 10
+            width: 225
+            height: 225
+            pad_all: 0
+            radius: 20
+            bg_color: color_slate_blue_gray
+            border_opa: transp
+            shadow_opa: transp
+            clickable: true
+            pressed:
+              bg_color: color_steel_blue
+            on_press:
+              - lvgl.page.show: chambre_climate_page
+            widgets:
+              - label:
+                  id: chambre_ov_mode_label
+                  align: top_left
+                  x: 12
+                  y: 12
+                  text_font: mdi_icons_28
+                  text_color: color_deep_orange
+                  text: "\U000F0238"
+              - label:
+                  align: top_left
+                  x: 48
+                  y: 16
+                  text_font: nunito_16
+                  text_color: color_misty_blue
+                  text: "Chambre"
+              - label:
+                  id: chambre_ov_current_label
+                  align: center
+                  y: -12
+                  text_font: nunito_48
+                  text_color: color_misty_blue
+                  text: "--°"
+              - label:
+                  align: center
+                  y: 40
+                  text_font: nunito_16
+                  text_color: color_steel_blue
+                  text: "actuel"
+              - label:
+                  id: chambre_ov_target_label
+                  align: bottom_mid
+                  y: -14
+                  text_font: nunito_18
+                  text_color: color_deep_orange
+                  text: "cible --°"
 
-              # Boiler button
-              - button:
-                  id: devices_boiler_btn
-                  width: 130
-                  height: 40
-                  bg_opa: transp
-                  shadow_opa: transp
-                  border_opa: transp
-                  widgets:
-                    - label:
-                        align: center
-                        text_font: nunito_18
-                        text_color: color_misty_blue
-                        text: "Boiler"
-                  # on_click:
-                  #   - lvgl.page.show: boiler_ch_page
-                  #   - lvgl.widget.show: boiler_select_widget
-              # Climate button
-              - button:
-                  id: devices_climate_btn
-                  width: 130
-                  height: 40
-                  bg_opa: transp
-                  shadow_opa: transp
-                  border_opa: transp
-                  widgets:
-                    - label:
-                        align: center
-                        text_font: nunito_18
-                        text_color: color_misty_blue
-                        text: "Climate"
-                  on_click:
-                    - lvgl.page.show: climate_page
+        # ─── CHAMBRE FÉLIX (bottom-left) ─────────────────────────────────
+        - obj:
+            id: felix_ov_card
+            x: 10
+            y: 245
+            width: 225
+            height: 225
+            pad_all: 0
+            radius: 20
+            bg_color: color_slate_blue_gray
+            border_opa: transp
+            shadow_opa: transp
+            clickable: true
+            pressed:
+              bg_color: color_steel_blue
+            on_press:
+              - lvgl.page.show: felix_climate_page
+            widgets:
+              - label:
+                  id: felix_ov_mode_label
+                  align: top_left
+                  x: 12
+                  y: 12
+                  text_font: mdi_icons_28
+                  text_color: color_deep_orange
+                  text: "\U000F0238"
+              - label:
+                  align: top_left
+                  x: 48
+                  y: 16
+                  text_font: nunito_16
+                  text_color: color_misty_blue
+                  text: "Chambre Félix"
+              - label:
+                  id: felix_ov_current_label
+                  align: center
+                  y: -12
+                  text_font: nunito_48
+                  text_color: color_misty_blue
+                  text: "--°"
+              - label:
+                  align: center
+                  y: 40
+                  text_font: nunito_16
+                  text_color: color_steel_blue
+                  text: "actuel"
+              - label:
+                  id: felix_ov_target_label
+                  align: bottom_mid
+                  y: -14
+                  text_font: nunito_18
+                  text_color: color_deep_orange
+                  text: "cible --°"
 
-              # Cover button
-              - button:
-                  id: devices_cover_btn
-                  width: 130
-                  height: 40
-                  bg_opa: transp
-                  shadow_opa: transp
-                  border_opa: transp
-                  widgets:
-                    - label:
-                        align: center
-                        text_font: nunito_18
-                        text_color: color_misty_blue
-                        text: "Cover"
-                  # on_click:
-                  #   - lvgl.page.show: ${cover_widget_name_1}_cover_page
-                  #   - delay: 250ms
-                  #   - lambda: |-
-                  #       int covers = ${covers_amount};
-                  #       if (covers >= 2) {
-                  #         lv_obj_clear_flag(id(cover_select_widget), LV_OBJ_FLAG_HIDDEN);
-                  #       }
+        # ─── SALLE DE BAIN (bottom-right) ────────────────────────────────
+        - obj:
+            id: sdb_ov_card
+            x: 245
+            y: 245
+            width: 225
+            height: 225
+            pad_all: 0
+            radius: 20
+            bg_color: color_slate_blue_gray
+            border_opa: transp
+            shadow_opa: transp
+            clickable: true
+            pressed:
+              bg_color: color_steel_blue
+            on_press:
+              - lvgl.page.show: sdb_climate_page
+            widgets:
+              - label:
+                  id: sdb_ov_mode_label
+                  align: top_left
+                  x: 12
+                  y: 12
+                  text_font: mdi_icons_28
+                  text_color: color_deep_orange
+                  text: "\U000F0238"
+              - label:
+                  align: top_left
+                  x: 48
+                  y: 16
+                  text_font: nunito_16
+                  text_color: color_misty_blue
+                  text: "Salle de bain"
+              - label:
+                  id: sdb_ov_current_label
+                  align: center
+                  y: -12
+                  text_font: nunito_48
+                  text_color: color_misty_blue
+                  text: "--°"
+              - label:
+                  align: center
+                  y: 40
+                  text_font: nunito_16
+                  text_color: color_steel_blue
+                  text: "actuel"
+              - label:
+                  id: sdb_ov_target_label
+                  align: bottom_mid
+                  y: -14
+                  text_font: nunito_18
+                  text_color: color_deep_orange
+                  text: "cible --°"
 
-              # Fan button
-              - button:
-                  id: devices_fan_btn
-                  width: 130
-                  height: 40
-                  bg_opa: transp
-                  shadow_opa: transp
+        # ─── RETOUR HOME ─────────────────────────────────────────────────
+        - obj:
+            align: bottom_left
+            x: 0
+            y: 0
+            width: 130
+            height: 50
+            bg_opa: transp
+            border_opa: transp
+            shadow_opa: transp
+            clickable: true
+            on_press:
+              - lvgl.page.show: home_page
+            widgets:
+              - obj:
+                  align: bottom_mid
+                  y: -8
+                  width: 80
+                  height: 5
+                  bg_color: color_steel_blue
                   border_opa: transp
-                  widgets:
-                    - label:
-                        align: center
-                        text_font: nunito_18
-                        text_color: color_misty_blue
-                        text: "Fan"
-                  on_click:
-                    - lvgl.page.show: ${fan_widget_name_1}_page
-                    - delay: 250ms
-                    - lambda: |-
-                        int fans = ${fans_amount};
-                        if (fans >= 2) {
-                          lv_obj_clear_flag(id(fan_select_widget), LV_OBJ_FLAG_HIDDEN);
-                        }
+                  shadow_opa: transp
+                  radius: 10
 
-              # Media Player button
-              - button:
-                  id: devices_media_player_btn
-                  width: 130
-                  height: 40
-                  bg_opa: transp
-                  shadow_opa: transp
-                  border_opa: transp
-                  widgets:
-                    - label:
-                        align: center
-                        text_font: nunito_18
-                        text_color: color_misty_blue
-                        text: "Media player"
-                  # on_click:
-                  #   - lvgl.page.show: media_player_page
-
-              # Vacuum button
-              - button:
-                  id: devices_vacuum_btn
-                  width: 130
-                  height: 40
-                  bg_opa: transp
-                  shadow_opa: transp
-                  border_opa: transp
-                  widgets:
-                    - label:
-                        align: center
-                        text_font: nunito_18
-                        text_color: color_misty_blue
-                        text: "Vacuum"
-                  on_click:
-                    - lvgl.page.show: vacuum_page
